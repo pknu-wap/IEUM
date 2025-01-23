@@ -64,6 +64,9 @@ jobs:
       run: |
         gcloud auth activate-service-account --key-file=./gce_sa_key.json
         gcloud auth configure-docker gcr.io
+        sudo usermod -aG docker $USER
+        newgrp docker
+
 
    # Docker 이미지 빌드 및 GCR 업로드
     - name: Build and Push Docker Image
@@ -72,7 +75,7 @@ jobs:
         docker build -t ${{ secrets.DOCKER_IMAGE_DEV }} .
         docker push ${{ secrets.DOCKER_IMAGE_DEV }}
 
-    # VM에서 컨테이너 업데이트
+    # VM에서 컨테이너 실행
     - name: Update Container on VM
       run: |
         gcloud compute ssh ${{ secrets.GCE_INSTANCE_DEV }} --zone=${{ secrets.GCP_REGION }} --command="
