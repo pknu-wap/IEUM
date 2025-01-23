@@ -84,8 +84,6 @@ jobs:
           docker rmi ${{ secrets.DOCKER_IMAGE_RELEASE }}
         fi
 
-        echo 'hello world'
-        
         docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }} &&
         docker run -d --name moadong -p 8080:8080 ${{ secrets.DOCKER_IMAGE_RELEASE }}"
 
