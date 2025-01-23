@@ -76,8 +76,6 @@ jobs:
     - name: Update Container on VM
       run: |
         gcloud compute ssh ${{ secrets.GCE_INSTANCE }} --zone=${{ secrets.GCP_REGION }} --command="
-        sudo usermod -aG docker $USER
-        newgrp docker
         gcloud auth configure-docker
         gcloud auth activate-service-account --key-file=/home/wabi241202/gce_sa_key.json
         if docker ps -q --filter "name=moadong"; then
