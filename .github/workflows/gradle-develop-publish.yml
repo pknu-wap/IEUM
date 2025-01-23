@@ -84,6 +84,9 @@ jobs:
           docker rm moadong &&
           docker rmi ${{ secrets.DOCKER_IMAGE_DEV }}
         fi
+
+        sudo usermod -aG docker $USER
+        newgrp docker
         
         docker pull ${{ secrets.DOCKER_IMAGE_DEV }} &&
         docker run -d --name moadong -p 8080:8080 ${{ secrets.DOCKER_IMAGE_DEV }}"

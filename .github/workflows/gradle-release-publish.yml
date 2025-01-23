@@ -84,10 +84,8 @@ jobs:
           docker rmi ${{ secrets.DOCKER_IMAGE_RELEASE }}
         fi
         
-        groups $USER
         sudo usermod -aG docker $USER
         newgrp docker
-        groups $USER
 
         docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }} &&
         docker run -d --name moadong -p 8080:8080 ${{ secrets.DOCKER_IMAGE_RELEASE }}"
