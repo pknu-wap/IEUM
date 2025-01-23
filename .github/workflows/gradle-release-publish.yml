@@ -9,7 +9,7 @@ name: Java CD with Gradle
 
 on:
   push:
-    branches: ["develop/be", "main", "CICD/#9-apply_cicd"]
+    branches: ["main", "CICD/#9-apply_cicd"]
     paths: ["backend/**"]
 
 jobs:
@@ -35,7 +35,7 @@ jobs:
       run: | 
         cd ./backend/src/main/resources
         touch ./application-prod.properties
-        echo "${{ secrets.APPLICATION_PROD }}" > ./application-prod.properties
+        echo "${{ secrets.APPLICATION_PROD_RELEASE }}" > ./application-prod.properties
 
     - name: Grant execute permission for gradlew
       run: chmod +x ./backend/gradlew
@@ -69,23 +69,23 @@ jobs:
     - name: Build and Push Docker Image
       run: |
         cd backend
-        docker build -t ${{ secrets.DOCKER_IMAGE }} .
-        docker push ${{ secrets.DOCKER_IMAGE }}
+        docker build -t ${{ secrets.DOCKER_IMAGE_RELEASE }} .
+        docker push ${{ secrets.DOCKER_IMAGE_RELEASE }}
 
     # VM에서 컨테이너 업데이트
     - name: Update Container on VM
       run: |
-        gcloud compute ssh ${{ secrets.GCE_INSTANCE }} --zone=${{ secrets.GCP_REGION }} --command="
+        gcloud compute ssh ${{ secrets.GCE_INSTANCE_DEV }} --zone=${{ secrets.GCP_REGION }} --command="
         gcloud auth configure-docker
         gcloud auth activate-service-account --key-file=/home/wabi241202/gce_sa_key.json
         if docker ps -q --filter "name=moadong"; then
           docker stop moadong &&
           docker rm moadong &&
-          docker rmi ${{ secrets.DOCKER_IMAGE }}
+          docker rmi ${{ secrets.DOCKER_IMAGE_RELEASE }}
         fi
         
-        docker pull ${{ secrets.DOCKER_IMAGE }} &&
-        docker run -d --name moadong -p 8080:8080 ${{ secrets.DOCKER_IMAGE }}"
+        docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }} &&
+        docker run -d --name moadong -p 8080:8080 ${{ secrets.DOCKER_IMAGE_RELEASE }}"
 
 #     - name: Docker build
 #       run: |
